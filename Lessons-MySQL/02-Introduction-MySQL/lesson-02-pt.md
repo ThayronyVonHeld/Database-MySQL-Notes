@@ -6,8 +6,7 @@
 
 * Conhecer a origem e a evolução histórica do MySQL
 * Entender o modelo de licenciamento e o conceito de software livre
-* Compreender a relação entre MySQL, Oracle e MariaDB
-* Identificar as subdivisões da linguagem SQL utilizadas pelo MySQL
+* Entender as subdivisões da linguagem SQL (DDL, DML, DQL, DCL, DTL)
 * Entender o conceito de transações e os princípios ACID (D.I.C.A.)
 * Conhecer as principais ferramentas utilizadas no ecossistema MySQL
 
@@ -75,12 +74,13 @@ O MySQL utiliza a **SQL (Structured Query Language)**, que é subdividida de aco
 
 Usada para **definir e modificar a estrutura** do banco de dados.
 
-```text
-Exemplos:
-- CREATE DATABASE
-- CREATE TABLE
-- ALTER TABLE
-- DROP TABLE
+```sql
+-- Exemplos práticos
+CREATE DATABASE escola;          -- Criar banco
+CREATE TABLE aluno (...);        -- Criar tabela
+ALTER TABLE aluno ADD COLUMN ...;-- Modificar tabela
+DROP TABLE aluno;                -- Remover tabela
+TRUNCATE TABLE aluno;            -- Esvaziar tabela
 ```
 
 ---
@@ -89,11 +89,11 @@ Exemplos:
 
 Responsável pela **manipulação direta dos dados** armazenados.
 
-```text
-Exemplos:
-- INSERT
-- UPDATE
-- DELETE
+```sql
+-- Exemplos práticos
+INSERT INTO aluno VALUES (...);  -- Inserir dados
+UPDATE aluno SET nome = ...;     -- Atualizar dados
+DELETE FROM aluno WHERE ...;     -- Remover dados
 ```
 
 ---
@@ -102,23 +102,24 @@ Exemplos:
 
 Focada em **consultas aos dados**.
 
-```text
-Comando principal:
-- SELECT
+```sql
+-- Exemplos práticos
+SELECT * FROM aluno;             -- Consultar tudo
+SELECT nome, idade FROM aluno;   -- Colunas específicas
+SELECT * FROM aluno WHERE ...;   -- Com filtros
 ```
-
 > 📌 Embora alguns autores incluam o SELECT na DML, didaticamente ele é tratado como DQL.
 
 ---
 
-### 🔐 DCL – Data Control Language
+## 🔐 DCL – Data Control Language
 
 Gerencia **permissões e controle de acesso** ao banco de dados.
 
-```text
-Exemplos:
-- GRANT
-- REVOKE
+```sql
+-- Exemplos práticos
+GRANT SELECT ON escola.* TO usuario;  -- Dar permissão
+REVOKE DELETE ON escola.* FROM usuario; -- Remover permissão
 ```
 
 ---
@@ -127,16 +128,16 @@ Exemplos:
 
 Relacionada ao **controle de transações**, garantindo segurança nas operações.
 
-```text
-Exemplos:
-- COMMIT
-- ROLLBACK
-- SAVEPOINT
+```sql
+-- Exemplos práticos
+START TRANSACTION;               -- Iniciar transação
+COMMIT;                          -- Confirmar alterações
+ROLLBACK;                        -- Desfazer alterações
 ```
 
 ---
 
-## 🧠 Transações e o Conceito D.I.C.A. (ACID)
+## 🔒 Transações e o Conceito D.I.C.A. (ACID)
 
 Para garantir confiabilidade, o MySQL segue os princípios conhecidos como **ACID**, apresentados aqui pelo acrônimo **D.I.C.A.**
 
@@ -146,23 +147,47 @@ Para garantir confiabilidade, o MySQL segue os princípios conhecidos como **ACI
 
 Após a confirmação de uma transação, os dados devem **permanecer armazenados**, mesmo em caso de falhas.
 
+```sql
+-- Exemplo em MySQL
+START TRANSACTION;
+UPDATE conta SET saldo = saldo - 100 WHERE id = 1;
+UPDATE conta SET saldo = saldo + 100 WHERE id = 2;
+COMMIT;  -- Agora é permanente!
+```
 ---
 
 ### I – Isolamento
 
 Transações simultâneas **não devem interferir umas nas outras**.
 
-```text
-Exemplo:
-Dois usuários atualizando dados ao mesmo tempo
-não podem causar inconsistência
-```
+```sql
+-- Usuário A (às 10:00:00)
+START TRANSACTION;
+SELECT saldo FROM conta WHERE id = 1;  -- Vê R$ 500,00
 
+-- Usuário B (às 10:00:01)
+START TRANSACTION;
+UPDATE conta SET saldo = 400 WHERE id = 1;
+COMMIT;
+
+-- Usuário A ainda vê R$ 500,00 até COMMIT
+```
 ---
 
 ### C – Consistência
 
 O banco de dados deve sempre sair de um **estado válido** para outro estado válido.
+
+```sql
+-- Estado válido: Saldo nunca negativo
+CREATE TABLE conta (
+    id INT PRIMARY KEY,
+    saldo DECIMAL(10,2) CHECK (saldo >= 0)  -- Restrição
+);
+
+-- Transação rejeitada se violar consistência
+UPDATE conta SET saldo = -50 WHERE id = 1;  -- ERRO!
+```
 
 ---
 
@@ -170,12 +195,30 @@ O banco de dados deve sempre sair de um **estado válido** para outro estado vá
 
 Princípio do **tudo ou nada**.
 
-```text
-- Se todas as operações da transação ocorrerem: OK
-- Se qualquer operação falhar: tudo é desfeito (ROLLBACK)
-```
+```sql
+START TRANSACTION;
+-- Operação 1: OK
+UPDATE estoque SET quantidade = quantidade - 1 WHERE produto_id = 5;
 
+-- Operação 2: FALHA (produto não existe)
+INSERT INTO venda (produto_id, quantidade) VALUES (999, 1);
+
+-- Como a segunda falhou, tudo é desfeito
+ROLLBACK;  -- Atomicidade em ação!
+```
 > 💡 Funciona como um "Ctrl + Z" interno do banco de dados.
+---
+
+### Por que transações são importantes?
+```text
+Exemplo do Caixa Eletrônico:
+1. Você solicita R$ 100,00
+2. Sistema verifica saldo (tem R$ 500,00)
+3. Sistema debita R$ 100,00 da sua conta
+4. Sistema libera R$ 100,00 no caixa
+
+Se falhar no passo 3 ou 4: Problema!
+```
 
 ---
 
@@ -183,48 +226,90 @@ Princípio do **tudo ou nada**.
 
 ### 🖥️ MySQL Server
 
-* O serviço responsável por armazenar e processar os dados
-* Executa em segundo plano
-* É o núcleo do banco de dados
+```text
+Função: O motor do banco de dados
+Características:
+- Serviço que roda em background
+- Escuta conexões (normalmente porta 3306)
+- Processa comandos SQL
+- Gerencia dados em disco
+```
 
 ---
 
-### 🧰 MySQL Workbench
-
-Ferramenta gráfica que permite:
+### 🧰 MySQL Workbench (Interface Gráfica)
 
 ```text
-- Criar e gerenciar bancos de dados
-- Executar comandos SQL
-- Administrar usuários
-- Visualizar diagramas
+Vantagens sobre terminal:
+- Interface visual amigável
+- Editor SQL com highlight
+- Design visual de tabelas
+- Administração gráfica
+- Exportação/Importação visual
+- Modelagem de dados (EER Diagrams)
 ```
 
 > ✅ Mais produtivo e amigável que o uso exclusivo do terminal.
 
 ---
 
-### 📚 Documentação Oficial
+### 🧠 Terminal/CLI (Command Line Interface)
+```bash
+# Comandos básicos no terminal
+mysql --version                    # Verificar versão
+mysql -u root -p                   # Conectar ao servidor
+mysql -h localhost -u usuario -p   # Conectar com host
 
-* [https://dev.mysql.com/doc/](https://dev.mysql.com/doc/)
-
-### ⬇️ Instalação
-
-* [https://www.mysql.com/downloads/](https://www.mysql.com/downloads/)
-
----
-
-## 📊 Resumo Rápido
-
-* MySQL surgiu em 1994 com foco em software livre
-* É mantido atualmente pela Oracle
-* MariaDB é um fork criado como alternativa comunitária
-* SQL é subdividida em DDL, DML, DQL, DCL e DTL
-* Transações seguem os princípios D.I.C.A. (ACID)
-* MySQL Server e Workbench são as principais ferramentas
+# Dentro do MySQL CLI
+SHOW DATABASES;                    # Listar bancos
+USE nome_banco;                    # Selecionar banco
+SHOW TABLES;                       # Listar tabelas
+EXIT; ou \q                        # Sair
+```
 
 ---
 
-### 💡 Dica Final
+### 🗃️ Documentação Oficial
+```text
+Site: https://dev.mysql.com/doc/
+Conteúdo:
+- Manual completo
+- Tutoriais passo a passo
+- Referência de comandos
+- Exemplos práticos
+- Notas de versão
+```
 
-"Aprender MySQL não é apenas aprender comandos SQL, mas entender como os dados são protegidos, organizados e manipulados de forma segura dentro de um sistema."
+---
+
+## 📥 Instalação Prática
+
+### Passo a Passo para Windows
+
+```text
+1. Acesse: https://www.mysql.com/downloads/
+2. Selecione: "MySQL Community (GPL) Downloads"
+3. Escolha: "MySQL Community Server"
+4. Baixe o instalador (Windows MSI Installer)
+5. Execute o instalador:
+   - Escolha "Developer Default"
+   - Siga as instruções
+   - Anote a senha do root!
+6. Instale também o MySQL Workbench
+```
+
+### Verificação da Instalação
+```bash
+# Abra o terminal (CMD) e digite:
+mysql --version
+# Deve mostrar: mysql  Ver 8.0.x for Win64...
+
+# Inicie o MySQL Workbench
+# Conecte usando:
+Hostname: localhost
+Port: 3306
+Username: root
+Password: [sua senha]
+```
+
+> 💡 Dica: Pense no MySQL como o 'armazém' da sua aplicação POO. As classes são os 'catálogos' (tabelas), os objetos são os 'produtos' (registros), e os métodos são os 'funcionários' que organizam e recuperam esses produtos quando necessário."

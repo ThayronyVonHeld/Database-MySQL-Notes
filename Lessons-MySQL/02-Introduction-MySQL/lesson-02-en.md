@@ -1,390 +1,325 @@
-# 📚 Aula 2 - Introdução ao MySQL
+# 📚 Lesson 2 – Introduction to MySQL
 
 ---
 
-## 🎯 Objetivos da Aula
+## 🎯 Lesson Objectives
 
-* Conhecer a origem e evolução histórica do MySQL
-* Compreender a estrutura corporativa e licenciamento do MySQL
-* Entender as subdivisões da linguagem SQL (DDL, DML, DQL, DCL, DTL)
-* Dominar os princípios D.I.C.A. (ACID) para transações confiáveis
-* Familiarizar-se com as ferramentas de implementação do MySQL
-* Preparar o ambiente para desenvolvimento prático
+* Learn about the origin and historical evolution of MySQL
+* Understand the licensing model and the concept of free/open-source software
+* Understand the subdivisions of the SQL language (DDL, DML, DQL, DCL, DTL)
+* Understand the concept of transactions and the ACID principles (D.I.C.A.)
+* Learn about the main tools used in the MySQL ecosystem
 
 ---
 
-## 🕰️ Origem e Evolução Histórica do MySQL
+## 🕰️ Origin and Historical Evolution of MySQL
 
-### 1994 - O Nascimento na Suécia
+**MySQL** emerged in **1994, in Sweden**, created by **Michael Widenius** (known as *Monty*) and **David Axmark**. Unlike many technologies of its time, it was designed from the beginning as **free and open-source software**.
+
+### 📜 Licensing and Open Source Philosophy
+
+MySQL was distributed under the **GPL (General Public License)**, which guarantees:
+
 ```text
-Criadores: Michael "Monty" Widenius e David Axmark
-Local: Suécia
-Filosofia: Gratuito e de código aberto (Open Source)
-Licença: GPL (General Public License)
+- Freedom to study the source code
+- Ability to modify the software
+- Right to redistribute it
 ```
 
-**Características Iniciais**:
-- Foco em velocidade e simplicidade
-- Nome "MySQL": "My" (filha de Monty) + "SQL"
-- Alternativa aos bancos caros da época
+> 💡 This model was essential for the rapid adoption of MySQL by companies, universities, and independent developers.
 
 ---
 
-### Linha do Tempo Corporativa
+### 🏢 Corporate Changes
 
-```mermaid
-timeline
-    title Evolução Corporativa do MySQL
-    section 1994-2007
-       1994 : Nascimento na Suécia<br>por Monty Widenius
-       2001 : Versão 4.0<br>Suporte a uniões
-       2003 : Versão 4.1<br>Subconsultas e UTF-8
-    section 2007-2009
-       2007 : Aquisição pela<br>Sun Microsystems
-       2008 : MySQL 5.1<br>Particionamento de tabelas
-    section 2009-Presente
-       2009 : Oracle compra Sun<br>Torna-se proprietária
-       2010 : Nascimento do MariaDB<br>(Fork por Monty)
-       2013 : MySQL 5.7<br>Suporte a JSON
-       2018 : MySQL 8.0<br>Melhorias de performance
-```
+MySQL’s trajectory includes important acquisitions in the technology sector:
 
-### O Fork: MariaDB
-```text
-Criado por: Monty Widenius (criador original do MySQL)
-Motivo: Resposta à aquisição pela Oracle
-Status: Projeto comunitário independente
-Compatibilidade: Alta compatibilidade com MySQL
-```
+* **2007** – Acquired by **Sun Microsystems** (the company behind Java)
+* **2009** – Sun was acquired by **Oracle**, which became the current maintainer of MySQL
 
-### Grandes Usuários do MySQL
-```text
-┌─────────────────┬────────────────────────────┐
-│ Google         │ Backend de diversos serviços│
-├─────────────────┼────────────────────────────┤
-│ NASA           │ Controle de missões         │
-├─────────────────┼────────────────────────────┤
-│ Wikipedia      │ Todo o conteúdo             │
-├─────────────────┼────────────────────────────┤
-│ Facebook       │ Sistema de relacionamentos  │
-├─────────────────┼────────────────────────────┤
-│ YouTube        │ Metadados dos vídeos        │
-└─────────────────┴────────────────────────────┘
-```
+This change raised concerns within the open-source community.
 
 ---
 
-## 🗃️ Estrutura da Linguagem SQL
+### 🌱 The Emergence of MariaDB
 
-### As 5 Subdivisões do SQL (MySQL)
+In response to Oracle’s acquisition, **Monty Widenius** created **MariaDB**, a *fork* of MySQL.
 
-```mermaid
-graph TD
-    A[SQL - Structured Query Language] --> B[DDL]
-    A --> C[DML]
-    A --> D[DQL]
-    A --> E[DCL]
-    A --> F[DTL]
-    
-    B --> B1[CREATE]
-    B --> B2[ALTER]
-    B --> B3[DROP]
-    B --> B4[TRUNCATE]
-    
-    C --> C1[INSERT]
-    C --> C2[UPDATE]
-    C --> C3[DELETE]
-    
-    D --> D1[SELECT]
-    
-    E --> E1[GRANT]
-    E --> E2[REVOKE]
-    
-    F --> F1[COMMIT]
-    F --> F2[ROLLBACK]
-    F --> F3[SAVEPOINT]
+```text
+Fork = a new development line
+based on the original code, but independent
 ```
 
-### 1. DDL - Data Definition Language
-**Função**: Definir e modificar a estrutura do banco
-```sql
--- Exemplos práticos
-CREATE DATABASE escola;          -- Criar banco
-CREATE TABLE aluno (...);        -- Criar tabela
-ALTER TABLE aluno ADD COLUMN ...;-- Modificar tabela
-DROP TABLE aluno;                -- Remover tabela
-TRUNCATE TABLE aluno;            -- Esvaziar tabela
-```
+Despite this:
 
-### 2. DML - Data Manipulation Language
-**Função**: Manipular os dados dentro das tabelas
-```sql
--- Exemplos práticos
-INSERT INTO aluno VALUES (...);  -- Inserir dados
-UPDATE aluno SET nome = ...;     -- Atualizar dados
-DELETE FROM aluno WHERE ...;     -- Remover dados
-```
+* **MySQL** remains the most consolidated solution
+* It is widely used by large organizations
 
-### 3. DQL - Data Query Language
-**Função**: Consultar e recuperar dados
-```sql
--- Exemplos práticos
-SELECT * FROM aluno;             -- Consultar tudo
-SELECT nome, idade FROM aluno;   -- Colunas específicas
-SELECT * FROM aluno WHERE ...;   -- Com filtros
-```
+### 🌍 Notable Users
 
-### 4. DCL - Data Control Language
-**Função**: Controlar acesso e permissões
-```sql
--- Exemplos práticos
-GRANT SELECT ON escola.* TO usuario;  -- Dar permissão
-REVOKE DELETE ON escola.* FROM usuario; -- Remover permissão
-```
+* Google
+* NASA
+* Wikipedia
+* Facebook (at large scale)
 
-### 5. DTL - Data Transaction Language
-**Função**: Gerenciar transações
+---
+
+## 🧩 The SQL Language in MySQL
+
+MySQL uses **SQL (Structured Query Language)**, which is subdivided according to the purpose of its commands.
+
+---
+
+### 🏗️ DDL – Data Definition Language
+
+Used to **define and modify the database structure**.
+
 ```sql
--- Exemplos práticos
-START TRANSACTION;               -- Iniciar transação
-COMMIT;                          -- Confirmar alterações
-ROLLBACK;                        -- Desfazer alterações
+-- Practical examples
+CREATE DATABASE school;           -- Create database
+CREATE TABLE student (...);       -- Create table
+ALTER TABLE student ADD COLUMN ...; -- Modify table
+DROP TABLE student;               -- Remove table
+TRUNCATE TABLE student;           -- Empty table
 ```
 
 ---
 
-## 🔒 O Conceito D.I.C.A. (ACID)
+### ✏️ DML – Data Manipulation Language
 
-### Por que transações são importantes?
-```text
-Exemplo do Caixa Eletrônico:
-1. Você solicita R$ 100,00
-2. Sistema verifica saldo (tem R$ 500,00)
-3. Sistema debita R$ 100,00 da sua conta
-4. Sistema libera R$ 100,00 no caixa
+Responsible for the **direct manipulation of stored data**.
 
-Se falhar no passo 3 ou 4: Problema!
-```
-
-### D.I.C.A. na Prática
-
-```mermaid
-flowchart TD
-    A[Transação Bancária] --> B{D.I.C.A.}
-    
-    B --> D[Durabilidade]
-    B --> I[Isolamento]
-    B --> C[Consistência]
-    B --> A2[Atomicidade]
-    
-    D --> D1["Transação concluída?<br>→ Dados permanentes"]
-    I --> I1["Usuários simultâneos?<br>→ Não interferem"]
-    C --> C1["Estado válido?<br>→ Sempre para estado válido"]
-    A2 --> A3["Tudo ou nada?<br>→ Rollback se erro"]
-```
-
-### 1. Durabilidade (Durability)
-**Princípio**: Uma vez confirmada, a transação é permanente
 ```sql
--- Exemplo em MySQL
+-- Practical examples
+INSERT INTO student VALUES (...); -- Insert data
+UPDATE student SET name = ...;    -- Update data
+DELETE FROM student WHERE ...;    -- Remove data
+```
+
+---
+
+### 🔍 DQL – Data Query Language
+
+Focused on **querying data**.
+
+```sql
+-- Practical examples
+SELECT * FROM student;            -- Query all data
+SELECT name, age FROM student;    -- Specific columns
+SELECT * FROM student WHERE ...;  -- With filters
+```
+
+> 📌 Although some authors include SELECT within DML, didactically it is treated as DQL.
+
+---
+
+## 🔐 DCL – Data Control Language
+
+Manages **permissions and access control** in the database.
+
+```sql
+-- Practical examples
+GRANT SELECT ON school.* TO user;     -- Grant permission
+REVOKE DELETE ON school.* FROM user;  -- Revoke permission
+```
+
+---
+
+### 🔄 DTL – Data Transaction Language
+
+Related to **transaction control**, ensuring operational safety.
+
+```sql
+-- Practical examples
+START TRANSACTION;               -- Start transaction
+COMMIT;                          -- Confirm changes
+ROLLBACK;                        -- Undo changes
+```
+
+---
+
+## 🔒 Transactions and the D.I.C.A. (ACID) Concept
+
+To ensure reliability, MySQL follows the principles known as **ACID**, presented here using the acronym **D.I.C.A.**
+
+---
+
+### D – Durability
+
+After a transaction is committed, the data must **remain stored**, even in case of failures.
+
+```sql
+-- MySQL example
 START TRANSACTION;
-UPDATE conta SET saldo = saldo - 100 WHERE id = 1;
-UPDATE conta SET saldo = saldo + 100 WHERE id = 2;
-COMMIT;  -- Agora é permanente!
+UPDATE account SET balance = balance - 100 WHERE id = 1;
+UPDATE account SET balance = balance + 100 WHERE id = 2;
+COMMIT;  -- Now it is permanent!
 ```
 
-### 2. Isolamento (Isolation)
-**Princípio**: Transações simultâneas não interferem
-```sql
--- Usuário A (às 10:00:00)
-START TRANSACTION;
-SELECT saldo FROM conta WHERE id = 1;  -- Vê R$ 500,00
+---
 
--- Usuário B (às 10:00:01)
+### I – Isolation
+
+Simultaneous transactions **must not interfere with each other**.
+
+```sql
+-- User A (at 10:00:00)
 START TRANSACTION;
-UPDATE conta SET saldo = 400 WHERE id = 1;
+SELECT balance FROM account WHERE id = 1;  -- Sees $500.00
+
+-- User B (at 10:00:01)
+START TRANSACTION;
+UPDATE account SET balance = 400 WHERE id = 1;
 COMMIT;
 
--- Usuário A ainda vê R$ 500,00 até COMMIT
+-- User A still sees $500.00 until COMMIT
 ```
 
-### 3. Consistência (Consistency)
-**Princípio**: O banco sempre passa de um estado válido para outro
+---
+
+### C – Consistency
+
+The database must always move from one **valid state** to another valid state.
+
 ```sql
--- Estado válido: Saldo nunca negativo
-CREATE TABLE conta (
+-- Valid state: Balance is never negative
+CREATE TABLE account (
     id INT PRIMARY KEY,
-    saldo DECIMAL(10,2) CHECK (saldo >= 0)  -- Restrição
+    balance DECIMAL(10,2) CHECK (balance >= 0) -- Constraint
 );
 
--- Transação rejeitada se violar consistência
-UPDATE conta SET saldo = -50 WHERE id = 1;  -- ERRO!
+-- Transaction rejected if consistency is violated
+UPDATE account SET balance = -50 WHERE id = 1; -- ERROR!
 ```
 
-### 4. Atomicidade (Atomicity)
-**Princípio**: "Tudo ou Nada" - Ctrl+Z interno
+---
+
+### A – Atomicity
+
+The **all-or-nothing** principle.
+
 ```sql
 START TRANSACTION;
--- Operação 1: OK
-UPDATE estoque SET quantidade = quantidade - 1 WHERE produto_id = 5;
+-- Operation 1: OK
+UPDATE inventory SET quantity = quantity - 1 WHERE product_id = 5;
 
--- Operação 2: FALHA (produto não existe)
-INSERT INTO venda (produto_id, quantidade) VALUES (999, 1);
+-- Operation 2: FAILS (product does not exist)
+INSERT INTO sale (product_id, quantity) VALUES (999, 1);
 
--- Como a segunda falhou, tudo é desfeito
-ROLLBACK;  -- Atomicidade em ação!
+-- Since the second failed, everything is undone
+ROLLBACK; -- Atomicity in action!
+```
+
+> 💡 Works like an internal “Ctrl + Z” of the database.
+
+---
+
+### Why are transactions important?
+
+```text
+ATM Example:
+1. You request $100.00
+2. The system checks your balance ($500.00 available)
+3. The system debits $100.00 from your account
+4. The ATM releases $100.00
+
+If step 3 or 4 fails: Problem!
 ```
 
 ---
 
-## 🛠️ Ferramentas de Implementação e Uso
+## 🛠️ MySQL Ecosystem Tools
 
-### 1. MySQL Server
+### 🖥️ MySQL Server
+
 ```text
-Função: O motor do banco de dados
-Características:
-- Serviço que roda em background
-- Escuta conexões (normalmente porta 3306)
-- Processa comandos SQL
-- Gerencia dados em disco
-```
-
-### 2. MySQL Workbench (Interface Gráfica)
-```text
-Vantagens sobre terminal:
-- Interface visual amigável
-- Editor SQL com highlight
-- Design visual de tabelas
-- Administração gráfica
-- Exportação/Importação visual
-- Modelagem de dados (EER Diagrams)
-```
-
-### 3. Terminal/CLI (Command Line Interface)
-```bash
-# Comandos básicos no terminal
-mysql --version                    # Verificar versão
-mysql -u root -p                   # Conectar ao servidor
-mysql -h localhost -u usuario -p   # Conectar com host
-
-# Dentro do MySQL CLI
-SHOW DATABASES;                    # Listar bancos
-USE nome_banco;                    # Selecionar banco
-SHOW TABLES;                       # Listar tabelas
-EXIT; ou \q                        # Sair
-```
-
-### 4. Documentação Oficial
-```text
-Site: https://dev.mysql.com/doc/
-Conteúdo:
-- Manual completo
-- Tutoriais passo a passo
-- Referência de comandos
-- Exemplos práticos
-- Notas de versão
+Role: The database engine
+Characteristics:
+- Service running in the background
+- Listens for connections (usually port 3306)
+- Processes SQL commands
+- Manages data on disk
 ```
 
 ---
 
-## 📥 Instalação Prática
-
-### Passo a Passo para Windows
+### 🧰 MySQL Workbench (Graphical Interface)
 
 ```text
-1. Acesse: https://www.mysql.com/downloads/
-2. Selecione: "MySQL Community (GPL) Downloads"
-3. Escolha: "MySQL Community Server"
-4. Baixe o instalador (Windows MSI Installer)
-5. Execute o instalador:
-   - Escolha "Developer Default"
-   - Siga as instruções
-   - Anote a senha do root!
-6. Instale também o MySQL Workbench
+Advantages over the terminal:
+- User-friendly visual interface
+- SQL editor with syntax highlighting
+- Visual table design
+- Graphical administration
+- Visual export/import
+- Data modeling (EER Diagrams)
 ```
 
-### Verificação da Instalação
+> ✅ More productive and user-friendly than using the terminal alone.
+
+---
+
+### 🧠 Terminal / CLI (Command Line Interface)
+
 ```bash
-# Abra o terminal (CMD) e digite:
+# Basic terminal commands
+mysql --version                    # Check version
+mysql -u root -p                   # Connect to server
+mysql -h localhost -u user -p      # Connect with host
+
+# Inside the MySQL CLI
+SHOW DATABASES;                    # List databases
+USE database_name;                 # Select database
+SHOW TABLES;                       # List tables
+EXIT; or \q                        # Exit
+```
+
+---
+
+### 🗃️ Official Documentation
+
+```text
+Website: https://dev.mysql.com/doc/
+Content:
+- Complete manual
+- Step-by-step tutorials
+- Command reference
+- Practical examples
+- Release notes
+```
+
+---
+
+## 📥 Practical Installation
+
+### Step-by-Step for Windows
+
+```text
+1. Go to: https://www.mysql.com/downloads/
+2. Select: "MySQL Community (GPL) Downloads"
+3. Choose: "MySQL Community Server"
+4. Download the installer (Windows MSI Installer)
+5. Run the installer:
+   - Choose "Developer Default"
+   - Follow the instructions
+   - Write down the root password!
+6. Also install MySQL Workbench
+```
+
+### Installation Verification
+
+```bash
+# Open the terminal (CMD) and type:
 mysql --version
-# Deve mostrar: mysql  Ver 8.0.x for Win64...
+# Expected output: mysql  Ver 8.0.x for Win64...
 
-# Inicie o MySQL Workbench
-# Conecte usando:
+# Open MySQL Workbench
+# Connect using:
 Hostname: localhost
 Port: 3306
 Username: root
-Password: [sua senha]
+Password: [your password]
 ```
 
----
+> 💡 Tip: Think of MySQL as the *warehouse* of your OOP application. Classes are the *catalogs* (tables), objects are the *products* (records), and methods are the *employees* that organize and retrieve these products when needed.
 
-## 🚀 Primeiros Comandos Práticos
-
-### Criando Nosso Primeiro Banco
-```sql
--- 1. Conectar ao MySQL (Workbench ou CLI)
--- 2. Criar banco de dados escola
-CREATE DATABASE escola;
-
--- 3. Usar o banco escola
-USE escola;
-
--- 4. Criar primeira tabela: aluno
-CREATE TABLE aluno (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE,
-    data_nascimento DATE,
-    ativo BOOLEAN DEFAULT TRUE
-);
-
--- 5. Verificar tabela criada
-SHOW TABLES;
-DESCRIBE aluno;  -- ou DESC aluno;
-```
-
-### Operações Básicas CRUD
-```sql
--- CREATE (Inserir)
-INSERT INTO aluno (nome, email, data_nascimento)
-VALUES ('Ana Silva', 'ana@email.com', '2005-05-15');
-
--- READ (Consultar)
-SELECT * FROM aluno;
-SELECT nome, email FROM aluno WHERE ativo = TRUE;
-
--- UPDATE (Atualizar)
-UPDATE aluno SET email = 'ana.nova@email.com' WHERE id = 1;
-
--- DELETE (Excluir)
-DELETE FROM aluno WHERE id = 1;
--- Cuidado: DELETE é permanente (sem lixeira)
-```
-
----
-
-## 📊 Resumo Rápido
-
-* **MySQL** nasceu em **1994** na Suécia, criado por Monty Widenius
-* Pertence à **Oracle** desde 2009, mas continua gratuito
-* **MariaDB** é um fork criado pelo próprio Monty após a venda
-* SQL se divide em **5 partes**: DDL, DML, DQL, DCL, DTL
-* **D.I.C.A.** garante transações confiáveis: Durabilidade, Isolamento, Consistência, Atomicidade
-* **MySQL Workbench** é a ferramenta gráfica recomendada
-* A **documentação oficial** é essencial para consulta
-
----
-
-## 💡 Dica
-
-"Pense no MySQL como o 'armazém' da sua aplicação POO. As classes são os 'catálogos' (tabelas), os objetos são os 'produtos' (registros), e os métodos são os 'funcionários' que organizam e recuperam esses produtos quando necessário."
-
-> 🧠 **Exercício Prático para Casa**:
-> 1. Instale o MySQL Server e Workbench no seu computador
-> 2. Crie um banco chamado `biblioteca`
-> 3. Crie uma tabela `livro` com: id, titulo, autor, ano_publicacao, disponivel
-> 4. Insira 3 livros diferentes
-> 5. Faça uma consulta que mostre apenas livros disponíveis
-
----
