@@ -9,7 +9,7 @@
 * Aprender técnicas avançadas de inserção de dados
 * Implementar boas práticas na manipulação de informações
 * Otimizar inserções para performance e manutenibilidade
-* Configurar e utilizar o ambiente MySQL Workbench + WampServer
+
 
 ---
 
@@ -21,9 +21,6 @@
 graph TD
     A[Comandos SQL] --> B[DDL - Data Definition Language]
     A --> C[DML - Data Manipulation Language]
-    A --> D[DQL - Data Query Language]
-    A --> E[DCL - Data Control Language]
-    A --> F[DTL - Data Transaction Language]
     
     B --> B1[CREATE]
     B --> B2[ALTER]

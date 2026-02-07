@@ -4,180 +4,205 @@
 
 ## 🎯 Objetivos da Aula
 
-* Entender a diferença entre comandos **DDL** e **DML**
-* Aprender a inserir dados em tabelas com **INSERT INTO**
-* Inserir registros individuais e múltiplos
-* Trabalhar corretamente com **datas, textos e números**
-* Aplicar boas práticas de inserção de dados
+* Compreender a diferença entre DDL e DML na prática
+* Aprender a inserir registros em tabelas usando SQL
+* Entender a correspondência entre campos e valores
+* Inserir múltiplos registros em um único comando
+* Utilizar AUTO_INCREMENT, DEFAULT e NOT NULL corretamente
+* Aplicar boas práticas de modelagem ao inserir dados
 
 ---
 
-## 1. DDL vs DML (Revisão Importante)
+## 🧠 DDL vs DML na Prática
 
-Antes de inserir dados, precisamos lembrar da divisão dos comandos SQL:
+Antes de inserir dados, é importante lembrar a diferença entre dois grupos de comandos SQL:
 
-**DDL — Data Definition Language**
-Define a estrutura do banco.
-
-Exemplos:
-
-```sql
-CREATE DATABASE cadastro;
-CREATE TABLE pessoas (...);
+```text
+DDL → Define a estrutura
+DML → Manipula os dados
 ```
 
-**DML — Data Manipulation Language**
-Manipula os dados dentro das tabelas.
-
-Exemplos:
+### Exemplos de DDL
 
 ```sql
-INSERT
-UPDATE
-DELETE
+CREATE DATABASE escola;
+CREATE TABLE aluno (...);
+ALTER TABLE aluno ...;
 ```
 
-Nesta aula, começamos oficialmente a trabalhar com **DML**.
+### Exemplos de DML
+
+```sql
+INSERT INTO aluno ...;
+UPDATE aluno ...;
+DELETE FROM aluno ...;
+```
+
+Nesta aula, começamos a trabalhar com **DML**, alimentando as tabelas com informações reais.
 
 ---
 
-## 2. O Comando INSERT INTO
+## ✍️ O Comando INSERT INTO
 
-O comando `INSERT INTO` é usado para **adicionar registros em uma tabela**.
+O comando `INSERT INTO` é usado para inserir registros em uma tabela.
 
-Sintaxe completa:
+A lógica é simples:
 
-```sql
-INSERT INTO nome_da_tabela (campo1, campo2, campo3)
-VALUES (valor1, valor2, valor3);
-```
-
-Exemplo:
-
-```sql
-INSERT INTO pessoas (nome, nascimento, sexo, peso, altura, nacionalidade)
-VALUES ('Ana', '2004-05-10', 'F', '55.5', '1.65', 'Brasil');
-```
-
-Observe que:
-
-* A ordem dos valores deve corresponder à ordem dos campos
-* Textos devem estar entre **aspas simples**
-* Datas usam o padrão **YYYY-MM-DD**
-
----
-
-## 3. Trabalhando com AUTO_INCREMENT
-
-Quando a tabela possui um campo ID com `AUTO_INCREMENT`, não precisamos informá-lo.
-
-Exemplo:
-
-```sql
-INSERT INTO pessoas (nome, nascimento, sexo, peso, altura, nacionalidade)
-VALUES ('Carlos', '2001-02-15', 'M', '78.2', '1.80', 'Brasil');
-```
-
-O MySQL gera automaticamente o ID.
-
-Também é possível usar:
-
-```sql
-DEFAULT
-```
-
-Exemplo:
-
-```sql
-INSERT INTO pessoas VALUES
-(DEFAULT, 'Maria', '1999-03-20', 'F', '60.0', '1.70', 'Brasil');
+```text
+Campos → Valores correspondentes
 ```
 
 ---
 
-## 4. Inserção Simplificada
-
-Se os valores forem informados **na mesma ordem da criação da tabela**, os campos podem ser omitidos:
+### Sintaxe Completa (Forma Recomendada)
 
 ```sql
-INSERT INTO pessoas VALUES
-(DEFAULT, 'João', '2000-01-01', 'M', '80.0', '1.75', 'Brasil');
+INSERT INTO aluno (nome, nascimento, sexo, peso, altura, nacionalidade)
+VALUES ('Carlos', '2004-03-15', 'M', 78.5, 1.82, 'Brasil');
 ```
 
-Embora funcione, essa prática não é recomendada em projetos reais, pois depende da ordem exata das colunas.
+Regras importantes:
+
+```text
+- A ordem dos valores deve corresponder à ordem dos campos
+- Textos devem estar entre aspas simples
+- Datas usam o formato YYYY-MM-DD
+- O comando termina com ponto e vírgula
+```
 
 ---
 
-## 5. Inserindo Múltiplos Registros
+## 🤖 AUTO_INCREMENT e DEFAULT
 
-Podemos inserir vários registros em um único comando:
+Se a tabela foi criada assim:
 
 ```sql
-INSERT INTO pessoas (nome, nascimento, sexo, peso, altura, nacionalidade)
+CREATE TABLE aluno (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    nascimento DATE,
+    sexo ENUM('M','F'),
+    peso DECIMAL(5,2),
+    altura DECIMAL(3,2),
+    nacionalidade VARCHAR(20) DEFAULT 'Brasil'
+);
+```
+
+Não precisamos informar o `id` manualmente:
+
+```sql
+INSERT INTO aluno (nome, nascimento, sexo, peso, altura)
+VALUES ('Ana', '2005-07-21', 'F', 60.00, 1.65);
+```
+
+O MySQL irá:
+
+```text
+- Gerar o ID automaticamente
+- Inserir "Brasil" como nacionalidade (DEFAULT)
+```
+
+---
+
+## ⚡ Inserção Simplificada (Sem Informar Campos)
+
+Se todos os valores forem inseridos exatamente na ordem da tabela:
+
+```sql
+INSERT INTO aluno
+VALUES (DEFAULT, 'João', '2003-01-10', 'M', 80.00, 1.75, 'Brasil');
+```
+
+Embora funcione, **não é a forma mais segura** em projetos reais.
+
+> 💡 Boa prática: sempre informar os campos explicitamente.
+
+---
+
+## 📚 Inserindo Vários Registros
+
+O MySQL permite inserir múltiplas linhas em um único comando:
+
+```sql
+INSERT INTO aluno (nome, nascimento, sexo, peso, altura, nacionalidade)
 VALUES
-('Lucas', '2003-07-12', 'M', '70.0', '1.72', 'Brasil'),
-('Julia', '2005-11-30', 'F', '58.0', '1.60', 'Brasil'),
-('Pedro', '1998-09-09', 'M', '90.0', '1.85', 'Brasil');
+('Lucas', '2002-05-10', 'M', 70.00, 1.70, 'Brasil'),
+('Marina', '2004-11-03', 'F', 55.00, 1.60, 'Brasil'),
+('Pedro', '2001-02-18', 'M', 90.00, 1.85, 'Brasil');
 ```
 
-Isso melhora a eficiência e reduz o número de comandos executados.
+Isso é mais eficiente e reduz o número de comandos enviados ao servidor.
 
 ---
 
-## 6. Boas Práticas
+## 🧩 Integridade dos Dados
 
-### Não armazenar idade
+As regras definidas na tabela continuam valendo durante a inserção:
 
-Errado:
-
-```sql
-idade INT
+```text
+NOT NULL → impede campos obrigatórios vazios
+DEFAULT → define valores automáticos
+PRIMARY KEY → impede duplicação de identificadores
+ENUM → restringe valores possíveis
 ```
 
-Correto:
+Exemplo inválido:
+
+```sql
+INSERT INTO aluno (sexo) VALUES ('X');
+```
+
+Resultado:
+
+```text
+Erro — valor não permitido pelo ENUM
+```
+
+---
+
+## 🎂 Boa Prática: Idade vs Data de Nascimento
+
+Nunca armazene idade diretamente:
+
+```text
+Idade muda com o tempo
+Data de nascimento não
+```
+
+Exemplo correto:
 
 ```sql
 nascimento DATE
 ```
 
-A idade deve ser calculada dinamicamente pelo sistema.
+A idade pode ser calculada futuramente via SQL ou aplicação.
 
 ---
 
-### Integridade de dados
+## 🛠️ Ambiente de Prática
 
-Constraints ajudam a manter o banco consistente:
+Você pode executar os comandos usando:
 
-* `NOT NULL`
-* `DEFAULT`
-* `PRIMARY KEY`
-* `AUTO_INCREMENT`
+```text
+MySQL Workbench
+Terminal MySQL
+Aplicações Java via JDBC
+```
 
-Essas regras evitam registros incompletos ou inválidos.
-
----
-
-## 7. Ambiente de Prática
-
-Ferramentas utilizadas:
-
-* MySQL Server
-* MySQL Workbench
-
-A prática constante é essencial para aprender SQL de verdade.
-
-Banco de dados não se aprende apenas lendo — é necessário executar comandos e testar cenários.
+O importante é **praticar manualmente os comandos SQL**.
 
 ---
 
-## 🧠 Resumo da Aula
+## 📊 Resumo Rápido
 
-Nesta aula você aprendeu:
+* INSERT INTO insere registros em tabelas
+* DML manipula dados; DDL define estruturas
+* AUTO_INCREMENT gera IDs automaticamente
+* DEFAULT preenche valores não informados
+* É possível inserir múltiplos registros
+* Sempre prefira informar os campos no INSERT
+* Armazene data de nascimento, não idade
 
-* O que são comandos **DML**
-* Como usar **INSERT INTO**
-* Inserir registros únicos e múltiplos
-* Trabalhar com **AUTO_INCREMENT**
-* Utilizar boas práticas de inserção
+---
 
-A partir daqui, o banco começa a ficar **vivo**, pois já conseguimos cadastrar dados nas tabelas.
+> 💡 Dica: "Criar tabelas é modelagem. Inserir dados é testar se a modelagem realmente funciona."
