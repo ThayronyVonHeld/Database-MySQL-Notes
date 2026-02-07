@@ -1,21 +1,18 @@
-# 📚 Aula 5 - Inserção de Dados com INSERT INTO
+# 📚 Aula 5 — Inserindo Dados com INSERT INTO (MySQL)
 
 ---
 
 ## 🎯 Objetivos da Aula
 
-* Diferenciar claramente comandos DDL e DML
-* Dominar a sintaxe completa do comando INSERT INTO
-* Aprender técnicas avançadas de inserção de dados
-* Implementar boas práticas na manipulação de informações
+* Entender a diferença entre comandos **DDL** e **DML**
+* Aprender a inserir dados em tabelas com **INSERT INTO**
+* Trabalhar corretamente com **datas, textos e números**
 * Otimizar inserções para performance e manutenibilidade
+* Implementar boas práticas na manipulação de informações.
 
 
 ---
-
 ## 📊 Classificação de Comandos SQL: DDL vs. DML
-
-### Visão Geral da Arquitetura SQL
 
 ```mermaid
 graph TD
@@ -46,6 +43,8 @@ graph TD
 | **Exemplos** | `CREATE`, `ALTER`, `DROP` | `INSERT`, `UPDATE`, `DELETE` |
 | **Analogia** | Plantar a árvore (estrutura) | Colher frutos (dados) |
 
+---
+
 ### Exemplos Práticos da Diferença
 
 ```sql
@@ -74,9 +73,9 @@ DELETE FROM aluno WHERE id = 1;
 
 ---
 
-## 🎯 O Comando INSERT INTO: Sintaxe Completa
+## 🎯 O Comando INSERT INTO
 
-### Anatomia do INSERT INTO
+O comando `INSERT INTO` é usado para inserir registros em uma tabela.
 
 ```sql
 INSERT INTO nome_tabela 
@@ -135,157 +134,80 @@ INSERT INTO funcionario (nome, ativo) VALUES ('Inativo2', 0);   -- Equivalente
 
 ---
 
-## ⚡ Otimizações e Técnicas Avançadas
+## 🤖 Otimizações: AUTO_INCREMENT e DEFAULT
 
-### 1. Auto-incremento e o Campo ID
+Se a tabela foi criada assim:
 
 ```sql
-CREATE TABLE produto (
-    id INT PRIMARY KEY AUTO_INCREMENT,  -- AUTO_INCREMENT aqui
+CREATE TABLE aluno (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    preco DECIMAL(10,2)
+    nascimento DATE,
+    sexo ENUM('M','F'),
+    peso DECIMAL(5,2),
+    altura DECIMAL(3,2),
+    nacionalidade VARCHAR(20) DEFAULT 'Brasil'
 );
-
--- ✅ FORMAS CORRETAS de inserir com AUTO_INCREMENT:
-
--- Opção A: Omitir completamente o campo id
-INSERT INTO produto (nome, preco) 
-VALUES ('Notebook', 2999.90);
-
--- Opção B: Usar NULL (o MySQL entende que deve gerar)
-INSERT INTO produto (id, nome, preco) 
-VALUES (NULL, 'Mouse', 89.90);
-
--- Opção C: Usar DEFAULT (mais explícito)
-INSERT INTO produto (id, nome, preco) 
-VALUES (DEFAULT, 'Teclado', 149.90);
-
--- ❌ FORMAS ERRADAS:
-INSERT INTO produto (id, nome, preco) VALUES (0, 'Monitor', 999.90);  -- Pode gerar conflito
-INSERT INTO produto VALUES (999, 'Tablet', 1999.90);  -- Forçando valor, pode quebrar sequência
-
--- 📊 Verificar o último ID gerado
-SELECT LAST_INSERT_ID();  -- Retorna o último AUTO_INCREMENT gerado
 ```
 
-### 2. Omissão de Campos (Forma Simplificada)
+Não precisamos informar o `id` manualmente:
 
 ```sql
--- TABELA COM ORDEM ESPECÍFICA:
-CREATE TABLE cidade (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100),
-    uf CHAR(2),
-    populacao INT
-);
-
--- ✅ FORMA SIMPLIFICADA (quando conhece a ordem exata)
-INSERT INTO cidade VALUES (NULL, 'São Paulo', 'SP', 12300000);
--- Equivalente a: INSERT INTO cidade (id, nome, uf, populacao) VALUES ...
-
--- ⚠️ PERIGOS da forma simplificada:
--- 1. Se a ordem da tabela mudar, suas inserções quebram
--- 2. Se esquecer um valor, todos os campos ficam desalinhados
--- 3. Menos legível para outros desenvolvedores
-
--- ✅ FORMA EXPLÍCITA (RECOMENDADA - mais segura)
-INSERT INTO cidade (nome, uf, populacao) 
-VALUES ('Rio de Janeiro', 'RJ', 6748000);
+INSERT INTO aluno (nome, nascimento, sexo, peso, altura)
+VALUES ('Ana', '2005-07-21', 'F', 60.00, 1.65);
 ```
 
-### 3. Inserção Múltipla (Bulk Insert)
+O MySQL irá:
+
+```text
+- Gerar o ID automaticamente
+- Inserir "Brasil" como nacionalidade (DEFAULT)
+```
+---
+
+## ⚡ Inserção Simplificada (Sem Informar Campos)
+
+Se todos os valores forem inseridos exatamente na ordem da tabela:
 
 ```sql
--- ❌ FORMA INEFICIENTE (múltiplos comandos)
-INSERT INTO produto (nome, preco) VALUES ('Produto 1', 10.00);
-INSERT INTO produto (nome, preco) VALUES ('Produto 2', 20.00);
-INSERT INTO produto (nome, preco) VALUES ('Produto 3', 30.00);
-
--- ✅ FORMA OTIMIZADA (single query)
-INSERT INTO produto (nome, preco) 
-VALUES 
-    ('Produto 1', 10.00),
-    ('Produto 2', 20.00),
-    ('Produto 3', 30.00),
-    ('Produto 4', 40.00),
-    ('Produto 5', 50.00);
-
--- 📈 BENEFÍCIOS da inserção múltipla:
--- 1. Performance muito superior
--- 2. Uma única transação (mais seguro)
--- 3. Mais fácil de ler e manter
--- 4. Menor sobrecarga no servidor
-
--- 🚀 EXEMPLO REAL: Cadastro de cidades
-INSERT INTO cidade (nome, uf, populacao) 
-VALUES 
-    ('Belo Horizonte', 'MG', 2512000),
-    ('Salvador', 'BA', 2887000),
-    ('Fortaleza', 'CE', 2669000),
-    ('Brasília', 'DF', 3055000),
-    ('Curitiba', 'PR', 1948000);
+INSERT INTO aluno
+VALUES (DEFAULT, 'João', '2003-01-10', 'M', 80.00, 1.75, 'Brasil');
 ```
 
-### 4. Inserção com SELECT (INSERT...SELECT)
+Embora funcione, **não é a forma mais segura** em projetos reais.
+
+> 💡 Boa prática: sempre informar os campos explicitamente.
+
+---
+
+## 📚 Inserindo Vários Registros
+
+O MySQL permite inserir múltiplas linhas em um único comando:
 
 ```sql
--- Criar tabela temporária ou de backup
-CREATE TABLE produto_backup LIKE produto;
-
--- Copiar todos os dados de uma tabela para outra
-INSERT INTO produto_backup 
-SELECT * FROM produto;
-
--- Copiar apenas alguns dados com filtro
-INSERT INTO produto_backup (nome, preco)
-SELECT nome, preco FROM produto 
-WHERE preco > 100.00;
-
--- Criar resumo/agregado em outra tabela
-CREATE TABLE resumo_categorias (
-    categoria VARCHAR(50),
-    total_produtos INT,
-    preco_medio DECIMAL(10,2)
-);
-
-INSERT INTO resumo_categorias 
-SELECT 
-    categoria,
-    COUNT(*) as total_produtos,
-    AVG(preco) as preco_medio
-FROM produto 
-GROUP BY categoria;
+INSERT INTO aluno (nome, nascimento, sexo, peso, altura, nacionalidade)
+VALUES
+('Lucas', '2002-05-10', 'M', 70.00, 1.70, 'Brasil'),
+('Marina', '2004-11-03', 'F', 55.00, 1.60, 'Brasil'),
+('Pedro', '2001-02-18', 'M', 90.00, 1.85, 'Brasil');
 ```
+
+Isso é mais eficiente e reduz o número de comandos enviados ao servidor.
 
 ---
 
 ## 🛡️ Boas Práticas na Inserção de Dados
 
-### 1. Nunca Armazene Idade - Armazene Data de Nascimento
+As regras definidas na tabela continuam valendo durante a inserção:
 
-```sql
--- ❌ ERRADO: Idade muda todo ano!
-CREATE TABLE pessoa_errada (
-    nome VARCHAR(100),
-    idade INT  -- Ano que vem estará errado!
-);
-
--- ✅ CORRETO: Data de nascimento + cálculo dinâmico
-CREATE TABLE pessoa_correta (
-    nome VARCHAR(100),
-    data_nascimento DATE,
-    -- Idade calculada automaticamente (MySQL 5.7+)
-    idade INT AS (TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE())) VIRTUAL
-);
-
-INSERT INTO pessoa_correta (nome, data_nascimento) 
-VALUES ('Carlos', '1990-05-20');
-
-SELECT nome, idade FROM pessoa_correta;
--- Sempre atualizado!
+```text
+NOT NULL → impede campos obrigatórios vazios
+DEFAULT → define valores automáticos
+PRIMARY KEY → impede duplicação de identificadores
+ENUM → restringe valores possíveis
 ```
 
-### 2. Utilize Constraints para Qualidade dos Dados
+### 1. Constraints para Qualidade dos Dados
 
 ```sql
 CREATE TABLE cliente_protegido (
@@ -315,7 +237,7 @@ INSERT INTO cliente_protegido (cpf, nome, data_nascimento)
 VALUES ('12345678903', 'Futuro', '2030-01-01');  -- ERRO: CHECK constraint
 ```
 
-### 3. Tratamento de Valores Nulos vs. DEFAULT
+### 2. Tratamento de Valores Nulos vs. DEFAULT
 
 ```sql
 CREATE TABLE exemplo_default (
@@ -341,146 +263,28 @@ VALUES ();
 
 ---
 
-## 🛠️ Ambiente de Trabalho: MySQL Workbench + WampServer
-
-### Configuração do Ambiente
-
-```text
-🔧 WAMPSERVER (Windows)
-├── Apache (Servidor Web)
-├── MySQL (Servidor Banco de Dados) ← Usaremos este!
-├── PHP (Linguagem de Programação)
-└── Painel de Controle
-
-🖥️ MYSQL WORKBENCH (Interface Gráfica)
-├── Editor SQL
-├── Design Visual de Tabelas
-├── Administração
-└── Modelagem de Dados
-```
-
-### Conexão Correta no Workbench
+### 3. Nunca Armazene Idade - Armazene Data de Nascimento
 
 ```sql
--- Configuração típica:
-Hostname: localhost  ou  127.0.0.1
-Port: 3306
-Username: root
-Password: [deixe em branco ou 'root' no Wamp]
-
--- Teste de conexão
-SELECT @@version;  -- Mostra versão MySQL
-SHOW DATABASES;    -- Lista bancos disponíveis
-```
-
-### Scripts de Prática Recomendados
-
-```sql
--- 1. Criar banco de prática
-CREATE DATABASE IF NOT EXISTS pratica_insert;
-USE pratica_insert;
-
--- 2. Criar tabela de exemplo
-CREATE TABLE aluno_pratica (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL,
-    matricula VARCHAR(20) UNIQUE,
-    data_nascimento DATE NOT NULL,
-    email VARCHAR(100),
-    ativo BOOLEAN DEFAULT TRUE,
-    data_cadastro DATETIME DEFAULT CURRENT_TIMESTAMP
+-- ❌ ERRADO: Idade muda todo ano!
+CREATE TABLE pessoa_errada (
+    nome VARCHAR(100),
+    idade INT  -- Ano que vem estará errado!
 );
 
--- 3. Exercícios de inserção
--- Exercício 1: Inserção simples
-INSERT INTO aluno_pratica (nome, matricula, data_nascimento)
-VALUES ('João Silva', '2024001', '2005-03-15');
-
--- Exercício 2: Inserção múltipla
-INSERT INTO aluno_pratica (nome, matricula, data_nascimento, email) 
-VALUES 
-    ('Maria Santos', '2024002', '2004-07-22', 'maria@email.com'),
-    ('Pedro Oliveira', '2024003', '2006-01-30', 'pedro@email.com'),
-    ('Ana Costa', '2024004', '2005-11-08', 'ana@email.com');
-
--- Exercício 3: Testar constraints
--- Tente inserir matrícula duplicada (deve falhar)
-INSERT INTO aluno_pratica (nome, matricula, data_nascimento)
-VALUES ('Carlos Duplicado', '2024001', '2005-05-10');
-
--- Exercício 4: Inserção com DEFAULT
-INSERT INTO aluno_pratica (nome, matricula, data_nascimento)
-VALUES ('Teste Default', '2024005', '2005-09-12');
--- Verifique os valores DEFAULT aplicados
-```
-
----
-
-## 🚀 Exemplo Prático Completo
-
-### Sistema de Biblioteca - Inserção de Dados
-
-```sql
--- 1. Criar estrutura (DDL)
-CREATE DATABASE biblioteca_completa;
-USE biblioteca_completa;
-
-CREATE TABLE autor (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    nome VARCHAR(100) NOT NULL,
-    nacionalidade VARCHAR(50) DEFAULT 'Desconhecida',
+-- ✅ CORRETO: Data de nascimento + cálculo dinâmico
+CREATE TABLE pessoa_correta (
+    nome VARCHAR(100),
     data_nascimento DATE,
-    data_falecimento DATE NULL,
-    CHECK (data_falecimento IS NULL OR data_falecimento > data_nascimento)
+    -- Idade calculada automaticamente (MySQL 5.7+)
+    idade INT AS (TIMESTAMPDIFF(YEAR, data_nascimento, CURDATE())) VIRTUAL
 );
 
-CREATE TABLE livro (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    titulo VARCHAR(200) NOT NULL,
-    isbn VARCHAR(13) UNIQUE NOT NULL,
-    ano_publicacao YEAR,
-    paginas SMALLINT UNSIGNED,
-    preco DECIMAL(6,2) CHECK (preco > 0),
-    estoque INT DEFAULT 0,
-    autor_id INT,
-    FOREIGN KEY (autor_id) REFERENCES autor(id)
-);
+INSERT INTO pessoa_correta (nome, data_nascimento) 
+VALUES ('Carlos', '1990-05-20');
 
--- 2. Inserir autores (DML)
-INSERT INTO autor (nome, nacionalidade, data_nascimento, data_falecimento) 
-VALUES 
-    ('Machado de Assis', 'Brasileira', '1839-06-21', '1908-09-29'),
-    ('Clarice Lispector', 'Brasileira', '1920-12-10', '1977-12-09'),
-    ('George Orwell', 'Britânica', '1903-06-25', '1950-01-21'),
-    ('J.K. Rowling', 'Britânica', '1965-07-31', NULL),  -- Viva
-    ('Stephen King', 'Americana', '1947-09-21', NULL);   -- Vivo
-
--- 3. Inserir livros (DML) - Forma múltipla otimizada
-INSERT INTO livro (titulo, isbn, ano_publicacao, paginas, preco, estoque, autor_id) 
-VALUES 
-    ('Dom Casmurro', '9788535902775', 1899, 256, 29.90, 15, 1),
-    ('Memórias Póstumas de Brás Cubas', '9788535911241', 1881, 368, 34.90, 8, 1),
-    ('A Hora da Estrela', '9788535909552', 1977, 96, 24.90, 12, 2),
-    ('1984', '9788535914846', 1949, 328, 39.90, 20, 3),
-    ('A Revolução dos Bichos', '9788535915263', 1945, 152, 29.90, 18, 3),
-    ('Harry Potter e a Pedra Filosofal', '9788532511010', 1997, 264, 49.90, 25, 4),
-    ('It: A Coisa', '9788532526281', 1986, 1104, 79.90, 10, 5);
-
--- 4. Inserção especial: livros sem autor (para demonstração)
-INSERT INTO livro (titulo, isbn, ano_publicacao, paginas, preco, estoque) 
-VALUES 
-    ('Desconhecido', '9780000000001', 2000, 100, 19.90, 5);
-
--- 5. Consulta para verificar inserções
-SELECT 
-    l.titulo, 
-    a.nome as autor, 
-    l.ano_publicacao, 
-    l.preco,
-    l.estoque
-FROM livro l
-LEFT JOIN autor a ON l.autor_id = a.id
-ORDER BY l.titulo;
+SELECT nome, idade FROM pessoa_correta;
+-- Sempre atualizado!
 ```
 
 ---
@@ -493,22 +297,7 @@ ORDER BY l.titulo;
 * **Auto-increment**: Omita campo ou use `NULL`/`DEFAULT`
 * **Inserção múltipla**: Use `VALUES (), (), ()` para performance
 * **Boas práticas**: Armazene data_nascimento, não idade; use constraints
-* **Ambiente**: WampServer (MySQL) + MySQL Workbench (interface)
-* **Performance**: Bulk inserts são muito mais rápidos
 
----
-
-## 💡 Dica do Especialista
-
-"Pense no INSERT como alimentar um formulário: cada campo precisa do tipo correto de dado. Use a forma explícita `(campos) VALUES (valores)` - é mais verboso, mas evita erros catastróficos quando a estrutura mudar."
-
-> 🧠 **Exercício Obrigatório**:
-> 1. Crie banco `empresa_dml`
-> 2. Crie tabela `funcionario`: id(PK AI), nome(NN), cargo, salario, data_admissao(NN), departamento
-> 3. Insira 10 funcionários de uma vez (múltipla)
-> 4. Crie tabela `departamento`: id(PK AI), nome(NN), orcamento
-> 5. Insira 5 departamentos
-> 6. Atualize funcionários para usar IDs de departamento
-     > **Dica**: Use INSERT...SELECT para eficiência!
+> 💡 Dica: "Criar tabelas é modelagem. Inserir dados é testar se a modelagem realmente funciona."
 
 ---

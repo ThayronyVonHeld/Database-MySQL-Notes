@@ -1,208 +1,295 @@
-# 📚 Aula 5 — Inserindo Dados com INSERT INTO (MySQL)
+# 📚 Lesson 5 — Inserting Data with INSERT INTO (MySQL)
 
 ---
 
-## 🎯 Objetivos da Aula
+## 🎯 Lesson Objectives
 
-* Compreender a diferença entre DDL e DML na prática
-* Aprender a inserir registros em tabelas usando SQL
-* Entender a correspondência entre campos e valores
-* Inserir múltiplos registros em um único comando
-* Utilizar AUTO_INCREMENT, DEFAULT e NOT NULL corretamente
-* Aplicar boas práticas de modelagem ao inserir dados
+* Understand the difference between **DDL** and **DML** commands
+* Learn how to insert data into tables using **INSERT INTO**
+* Work correctly with **dates, text, and numbers**
+* Optimize insert operations for performance and maintainability
+* Apply best practices when manipulating data
 
 ---
 
-## 🧠 DDL vs DML na Prática
+## 📊 SQL Command Classification: DDL vs. DML
 
-Antes de inserir dados, é importante lembrar a diferença entre dois grupos de comandos SQL:
-
-```text
-DDL → Define a estrutura
-DML → Manipula os dados
+```mermaid
+graph TD
+    A[SQL Commands] --> B[DDL - Data Definition Language]
+    A --> C[DML - Data Manipulation Language]
+    
+    B --> B1[CREATE]
+    B --> B2[ALTER]
+    B --> B3[DROP]
+    B --> B4[TRUNCATE]
+    B --> B5[RENAME]
+    
+    C --> C1[INSERT]
+    C --> C2[UPDATE]
+    C --> C3[DELETE]
+    
+    style B fill:#2E7D32,color:#fff
+    style C fill:#C62828,color:#fff
 ```
 
-### Exemplos de DDL
+### DDL vs. DML — Detailed Comparison
+
+| Characteristic  | **DDL (Data Definition)**     | **DML (Data Manipulation)**      |
+| --------------- | ----------------------------- | -------------------------------- |
+| **Focus**       | Database structure            | Data content                     |
+| **When to use** | Initial design/setup          | Daily operations                 |
+| **Auto-commit** | Yes (implicit)                | Depends (transaction-controlled) |
+| **Examples**    | `CREATE`, `ALTER`, `DROP`     | `INSERT`, `UPDATE`, `DELETE`     |
+| **Analogy**     | Planting the tree (structure) | Harvesting the fruits (data)     |
+
+---
+
+### Practical Example of the Difference
 
 ```sql
-CREATE DATABASE escola;
-CREATE TABLE aluno (...);
-ALTER TABLE aluno ...;
-```
+-- 🏗️ DDL - CREATING THE STRUCTURE
+CREATE DATABASE school;
+USE school;
 
-### Exemplos de DML
+CREATE TABLE student (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    birth_date DATE,
+    height DECIMAL(3,2),
+    active BOOLEAN DEFAULT TRUE
+);
 
-```sql
-INSERT INTO aluno ...;
-UPDATE aluno ...;
-DELETE FROM aluno ...;
-```
+-- 📝 DML - INSERTING DATA
+INSERT INTO student (name, birth_date, height) 
+VALUES ('João Silva', '2005-05-15', 1.75);
 
-Nesta aula, começamos a trabalhar com **DML**, alimentando as tabelas com informações reais.
+-- 📝 More DML - UPDATING DATA
+UPDATE student SET height = 1.78 WHERE id = 1;
 
----
-
-## ✍️ O Comando INSERT INTO
-
-O comando `INSERT INTO` é usado para inserir registros em uma tabela.
-
-A lógica é simples:
-
-```text
-Campos → Valores correspondentes
+-- 📝 More DML - DELETING DATA
+DELETE FROM student WHERE id = 1;
 ```
 
 ---
 
-### Sintaxe Completa (Forma Recomendada)
+## 🎯 The INSERT INTO Command
+
+The `INSERT INTO` command is used to insert records into a table.
 
 ```sql
-INSERT INTO aluno (nome, nascimento, sexo, peso, altura, nacionalidade)
-VALUES ('Carlos', '2004-03-15', 'M', 78.5, 1.82, 'Brasil');
-```
-
-Regras importantes:
-
-```text
-- A ordem dos valores deve corresponder à ordem dos campos
-- Textos devem estar entre aspas simples
-- Datas usam o formato YYYY-MM-DD
-- O comando termina com ponto e vírgula
+INSERT INTO table_name 
+    (field1, field2, field3, ...) 
+VALUES 
+    (value1, value2, value3, ...);
 ```
 
 ---
 
-## 🤖 AUTO_INCREMENT e DEFAULT
-
-Se a tabela foi criada assim:
+### Step-by-Step Practical Example
 
 ```sql
-CREATE TABLE aluno (
+-- 1. Create the table (DDL)
+CREATE TABLE employee (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    position VARCHAR(50),
+    salary DECIMAL(10,2),
+    hire_date DATE,
+    active BOOLEAN DEFAULT TRUE
+);
+
+-- 2. Insert data (DML) — EXPLICIT FORM (RECOMMENDED)
+INSERT INTO employee 
+    (name, position, salary, hire_date) 
+VALUES 
+    ('Maria Santos', 'Analyst', 3500.00, '2023-06-10');
+
+-- 3. Verify insertion
+SELECT * FROM employee;
+```
+
+---
+
+## Data Formats in INSERT
+
+```sql
+-- 📝 TEXT: Always single quotes
+INSERT INTO employee (name) VALUES ('João "Joca" Silva');
+
+-- 🔢 NUMBER: With or without quotes (MySQL accepts both)
+INSERT INTO employee (salary) VALUES (2500.50);
+INSERT INTO employee (salary) VALUES ('2500.50');
+
+-- 📅 DATE: Single quotes + YYYY-MM-DD format
+INSERT INTO employee (hire_date) VALUES ('2024-01-31');
+
+-- ⚠️ INVALID DATES — Common mistakes
+INSERT INTO employee (hire_date) VALUES ('31-01-2024');
+INSERT INTO employee (hire_date) VALUES ('2024-13-01');
+INSERT INTO employee (hire_date) VALUES ('2024-02-30');
+
+-- ✅ BOOLEAN: TRUE/FALSE or 1/0
+INSERT INTO employee (name, active) VALUES ('Inactive', FALSE);
+INSERT INTO employee (name, active) VALUES ('Active', TRUE);
+INSERT INTO employee (name, active) VALUES ('Active2', 1);
+INSERT INTO employee (name, active) VALUES ('Inactive2', 0);
+```
+
+---
+
+## 🤖 Optimizations: AUTO_INCREMENT and DEFAULT
+
+If the table was created like this:
+
+```sql
+CREATE TABLE student (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(100) NOT NULL,
-    nascimento DATE,
-    sexo ENUM('M','F'),
-    peso DECIMAL(5,2),
-    altura DECIMAL(3,2),
-    nacionalidade VARCHAR(20) DEFAULT 'Brasil'
+    name VARCHAR(100) NOT NULL,
+    birth DATE,
+    gender ENUM('M','F'),
+    weight DECIMAL(5,2),
+    height DECIMAL(3,2),
+    nationality VARCHAR(20) DEFAULT 'Brazil'
 );
 ```
 
-Não precisamos informar o `id` manualmente:
+We don’t need to manually provide the `id`:
 
 ```sql
-INSERT INTO aluno (nome, nascimento, sexo, peso, altura)
+INSERT INTO student (name, birth, gender, weight, height)
 VALUES ('Ana', '2005-07-21', 'F', 60.00, 1.65);
 ```
 
-O MySQL irá:
+MySQL will:
 
-```text
-- Gerar o ID automaticamente
-- Inserir "Brasil" como nacionalidade (DEFAULT)
+```
+- Automatically generate the ID
+- Insert "Brazil" as nationality (DEFAULT)
 ```
 
 ---
 
-## ⚡ Inserção Simplificada (Sem Informar Campos)
+## ⚡ Simplified Insertion (Without Specifying Fields)
 
-Se todos os valores forem inseridos exatamente na ordem da tabela:
+If all values are inserted in the exact table order:
 
 ```sql
-INSERT INTO aluno
-VALUES (DEFAULT, 'João', '2003-01-10', 'M', 80.00, 1.75, 'Brasil');
+INSERT INTO student
+VALUES (DEFAULT, 'João', '2003-01-10', 'M', 80.00, 1.75, 'Brazil');
 ```
 
-Embora funcione, **não é a forma mais segura** em projetos reais.
+Although it works, **this is not the safest approach in real projects**.
 
-> 💡 Boa prática: sempre informar os campos explicitamente.
+> 💡 Best practice: always specify fields explicitly.
 
 ---
 
-## 📚 Inserindo Vários Registros
+## 📚 Inserting Multiple Records
 
-O MySQL permite inserir múltiplas linhas em um único comando:
+MySQL allows inserting multiple rows in a single command:
 
 ```sql
-INSERT INTO aluno (nome, nascimento, sexo, peso, altura, nacionalidade)
+INSERT INTO student (name, birth, gender, weight, height, nationality)
 VALUES
-('Lucas', '2002-05-10', 'M', 70.00, 1.70, 'Brasil'),
-('Marina', '2004-11-03', 'F', 55.00, 1.60, 'Brasil'),
-('Pedro', '2001-02-18', 'M', 90.00, 1.85, 'Brasil');
+('Lucas', '2002-05-10', 'M', 70.00, 1.70, 'Brazil'),
+('Marina', '2004-11-03', 'F', 55.00, 1.60, 'Brazil'),
+('Pedro', '2001-02-18', 'M', 90.00, 1.85, 'Brazil');
 ```
 
-Isso é mais eficiente e reduz o número de comandos enviados ao servidor.
+This is more efficient and reduces the number of commands sent to the server.
 
 ---
 
-## 🧩 Integridade dos Dados
+## 🛡️ Best Practices When Inserting Data
 
-As regras definidas na tabela continuam valendo durante a inserção:
+The rules defined in the table still apply during insertion:
 
-```text
-NOT NULL → impede campos obrigatórios vazios
-DEFAULT → define valores automáticos
-PRIMARY KEY → impede duplicação de identificadores
-ENUM → restringe valores possíveis
+```
+NOT NULL → prevents empty required fields
+DEFAULT → defines automatic values
+PRIMARY KEY → prevents duplicate identifiers
+ENUM → restricts allowed values
 ```
 
-Exemplo inválido:
+---
+
+### 1. Constraints for Data Quality
 
 ```sql
-INSERT INTO aluno (sexo) VALUES ('X');
-```
+CREATE TABLE protected_client (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    cpf VARCHAR(11) UNIQUE NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    birth_date DATE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    nationality VARCHAR(30) DEFAULT 'Brazil',
+    active BOOLEAN DEFAULT TRUE,
+    CHECK (birth_date < CURDATE())
+);
 
-Resultado:
-
-```text
-Erro — valor não permitido pelo ENUM
+-- ✅ Valid insertion
+INSERT INTO protected_client (cpf, name, birth_date)
+VALUES ('12345678901', 'Ana Silva', '1995-08-22');
 ```
 
 ---
 
-## 🎂 Boa Prática: Idade vs Data de Nascimento
-
-Nunca armazene idade diretamente:
-
-```text
-Idade muda com o tempo
-Data de nascimento não
-```
-
-Exemplo correto:
+### 2. NULL vs. DEFAULT
 
 ```sql
-nascimento DATE
+CREATE TABLE default_example (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    status VARCHAR(20) DEFAULT 'pending',
+    quantity INT DEFAULT 1,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO default_example (status, quantity)
+VALUES (NULL, NULL);
+
+INSERT INTO default_example (status, quantity)
+VALUES (DEFAULT, DEFAULT);
+
+INSERT INTO default_example ()
+VALUES ();
 ```
 
-A idade pode ser calculada futuramente via SQL ou aplicação.
-
 ---
 
-## 🛠️ Ambiente de Prática
+### 3. Never Store Age — Store Birth Date
 
-Você pode executar os comandos usando:
+```sql
+-- ❌ WRONG
+CREATE TABLE wrong_person (
+    name VARCHAR(100),
+    age INT
+);
 
-```text
-MySQL Workbench
-Terminal MySQL
-Aplicações Java via JDBC
+-- ✅ CORRECT
+CREATE TABLE correct_person (
+    name VARCHAR(100),
+    birth_date DATE,
+    age INT AS (TIMESTAMPDIFF(YEAR, birth_date, CURDATE())) VIRTUAL
+);
 ```
 
-O importante é **praticar manualmente os comandos SQL**.
+---
+
+## 📋 Quick Summary
+
+* **DDL vs DML**: DDL defines structure, DML manipulates data
+* **INSERT INTO** syntax:
+  `INSERT INTO table (fields) VALUES (values)`
+* **Formats**: Text and dates use single quotes; dates use `YYYY-MM-DD`
+* **Auto-increment**: Omit the field or use `NULL`/`DEFAULT`
+* **Multiple insertion** improves performance
+* **Best practice**: store birth_date, not age; use constraints
 
 ---
 
-## 📊 Resumo Rápido
-
-* INSERT INTO insere registros em tabelas
-* DML manipula dados; DDL define estruturas
-* AUTO_INCREMENT gera IDs automaticamente
-* DEFAULT preenche valores não informados
-* É possível inserir múltiplos registros
-* Sempre prefira informar os campos no INSERT
-* Armazene data de nascimento, não idade
+💡 **Tip:**
+“Creating tables is modeling. Inserting data is testing whether the model really works.”
 
 ---
-
-> 💡 Dica: "Criar tabelas é modelagem. Inserir dados é testar se a modelagem realmente funciona."
