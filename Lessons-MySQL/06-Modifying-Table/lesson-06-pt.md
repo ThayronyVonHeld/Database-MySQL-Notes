@@ -4,13 +4,11 @@
 
 ## 🎯 Objetivos da Aula
 
-* Entender como modificar tabelas já existentes no MySQL
-* Aprender a utilizar o comando **ALTER TABLE**
-* Adicionar, remover e modificar colunas
-* Renomear tabelas e campos
-* Compreender o uso de **UNIQUE**, **UNSIGNED** e **PRIMARY KEY** pós-criação
-* Aprender a utilizar comandos destrutivos com segurança
-* Consolidar o uso de **DESCRIBE** para verificação estrutural
+* Aprender o comando ALTER TABLE para modificação de tabelas
+* Compreender as diferenças entre ADD, MODIFY, CHANGE e DROP
+* Implementar constraints pós-criação com segurança
+* Utilizar comandos DDL com boas práticas e prevenção de erros
+* Gerenciar integridade durante alterações estruturais
 
 ---
 
@@ -76,6 +74,10 @@ ALTER TABLE aluno
 MODIFY COLUMN nome VARCHAR(150) NOT NULL;
 ```
 
+### 🚨 LIMITAÇÕES DO MODIFY:
+- 1. Não pode mudar o nome da coluna
+- 2. Algumas mudanças requerem recriação da tabela (lento em grandes tabelas)
+
 ---
 
 ## 🔄 Alterando Nome e Estrutura (CHANGE)
@@ -140,10 +142,44 @@ CREATE TABLE IF NOT EXISTS cursos (
 
 DROP TABLE IF EXISTS cursos;
 ```
-
 ---
 
 ## 🔒 Constraints e Parâmetros Avançados
+
+### IF NOT EXISTS / IF EXISTS - Segurança em DDL
+
+✅ Evitar erros na criação
+
+```
+CREATE TABLE IF NOT EXISTS produto (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100)
+);
+```
+
+#### Mesmo se executar múltiplas vezes, não dá erro
+```
+CREATE TABLE IF NOT EXISTS produto (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(100));
+-- Mesmo se executar múltiplas vezes, não dá erro
+```
+
+✅ Evitar erros na remoção
+
+```
+DROP TABLE IF EXISTS produto_inexistente;  -- Apenas warning, não erro
+```
+
+✅ EM CONJUNTO: Recriação segura de tabelas
+```
+-- ✅ EM CONJUNTO: Recriação segura de tabelas
+DROP TABLE IF EXISTS temp_data;
+CREATE TABLE temp_data (
+    id INT PRIMARY KEY);
+```
+
+---
 
 ### UNIQUE
 
@@ -161,15 +197,38 @@ PRIMARY KEY → identifica registros
 UNIQUE → evita duplicidade
 ```
 
+Exemplo:
+```sql
+CREATE TABLE curso (
+    id INT PRIMARY KEY AUTO_INCREMENT,  -- PK: única, não nula, identificadora
+    codigo VARCHAR(10) UNIQUE,          -- UNIQUE: única, pode ser nula
+    nome VARCHAR(100) NOT NULL UNIQUE   -- Pode ter múltiplos UNIQUE
+);
+```
 ---
 
 ### UNSIGNED
 
-Impede números negativos.
+Impede números negativos e economiza espaço.
 
 ```sql
 ALTER TABLE cursos
 MODIFY COLUMN carga_horaria INT UNSIGNED;
+```
+
+exemplo:
+```sql
+CREATE TABLE metricas (
+-- Com UNSIGNED: 0 a 255 (1 byte)
+visitas TINYINT UNSIGNED,
+
+    -- Sem UNSIGNED: -128 a 127 (1 byte)
+    temperatura TINYINT,
+    
+    -- Grande economia em milhões de registros
+    populacao INT UNSIGNED,  -- 0 a ~4 bilhões
+    altura SMALLINT UNSIGNED -- 0 a 65535 cm (655 metros)
+);
 ```
 
 Ideal para:
@@ -188,6 +247,28 @@ Ideal para:
 ```sql
 ALTER TABLE cursos
 ADD PRIMARY KEY (id);
+```
+
+Exemplo:
+```sql
+-- ❌ TABELA SEM PRIMARY KEY (problema futuro garantido)
+CREATE TABLE cliente_sem_pk (
+    nome VARCHAR(100),
+    cpf VARCHAR(11)
+);
+
+-- ✅ ADICIONAR PRIMARY KEY DEPOIS
+ALTER TABLE cliente_sem_pk 
+ADD COLUMN id INT FIRST;
+
+UPDATE cliente_sem_pk SET id = @row_number := @row_number + 1;
+
+ALTER TABLE cliente_sem_pk 
+ADD PRIMARY KEY (id);
+
+-- OU adicionar PK em coluna existente (se for única)
+ALTER TABLE cliente_sem_pk 
+ADD PRIMARY KEY (cpf);
 ```
 
 ---
@@ -230,7 +311,7 @@ Isso evita erros silenciosos.
 ## 📊 Resumo Rápido
 
 * **ALTER TABLE** modifica estruturas existentes
-* **ADD** adiciona colunas
+* **ADD COLUMN** adiciona colunas
 * **DROP COLUMN** remove colunas
 * **MODIFY** altera tipo e restrições
 * **CHANGE** altera nome e estrutura
@@ -240,9 +321,4 @@ Isso evita erros silenciosos.
 * **UNSIGNED** impede números negativos
 * **DESCRIBE** verifica alterações
 
----
-
-> 💡 **Dica:**
-> "Criar tabelas é o começo. Manter e evoluir a estrutura do banco é o trabalho real de quem desenvolve sistemas."
-
----
+> 💡Dica: Criar tabelas é o começo. Manter e evoluir a estrutura do banco é o trabalho real de quem desenvolve sistemas."
