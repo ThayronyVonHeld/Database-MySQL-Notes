@@ -105,11 +105,177 @@ INSERT INTO `aluno` VALUES
 ❌ DESVANTAGENS:
 - Arquivo grande pode ser pesado
 - Importação mais lenta que formato binário
-
-✅ SOLUÇÃO PARA GRANDES VOLUMES:
-- mysqldump com compressão
-- Ou use backups físicos (arquivos binários)
 ```
 
 ---
 
+## 📤 Exportação (Gerando o Backup)
+
+No MySQL Workbench:
+
+```text
+Server → Data Export
+```
+
+---
+
+### 🔎 Seleção de Objetos
+
+Você pode escolher:
+
+```text
+- O banco inteiro (Schema)
+- Apenas tabelas específicas
+```
+
+---
+
+### ⚙️ Opções de Exportação
+
+#### Dump Structure and Data
+
+```text
+Exporta estrutura + registros
+```
+
+#### Dump Structure Only
+
+```text
+Exporta apenas as tabelas (sem dados)
+```
+
+#### Dump Data Only
+
+```text
+Exporta apenas os registros
+```
+
+---
+
+### 📄 Self-contained File
+
+Opção recomendada:
+
+```text
+Export to Self-contained File
+```
+
+Gera um único arquivo `.sql`, facilitando transporte e armazenamento.
+
+---
+
+### 🏗️ Include Create Schema
+
+Essa opção é fundamental.
+
+Se marcada, o dump incluirá:
+
+```sql
+CREATE DATABASE nome_do_banco;
+```
+
+Isso permite restaurar o banco automaticamente em outro servidor.
+
+---
+
+## 📥 Importação (Restaurando o Banco)
+
+No MySQL Workbench:
+
+```text
+Server → Data Import
+```
+
+Passos:
+
+1. Selecionar o arquivo `.sql`
+2. Escolher o destino
+3. Clicar em **Start Import**
+
+Após a importação:
+
+```text
+Atualizar (Refresh) a lista de Schemas
+```
+
+O banco reaparecerá no servidor.
+
+---
+
+## 🖥️ Ferramenta vs Servidor
+
+É fundamental entender:
+
+```text
+MySQL Workbench ≠ Banco de Dados
+```
+
+O Workbench é apenas uma interface gráfica.
+
+O banco real está no:
+
+```text
+Servidor MySQL
+```
+
+Em ambiente de estudo, ele pode estar sendo executado via:
+
+```text
+WAMP Server
+```
+
+O dump permite mover dados entre servidores diferentes.
+
+---
+
+## 🔄 Fluxo Real de Uso Profissional
+
+```text
+1. Desenvolvedor cria banco localmente
+2. Gera dump (.sql)
+3. Envia para servidor de produção
+4. Importa no servidor final
+```
+
+Ou ainda:
+
+```text
+Baixar banco de testes da internet
+Importar para estudo
+Explorar consultas
+```
+
+---
+
+## ⚠️ Boas Práticas
+
+Antes de:
+
+```text
+- Alterações grandes
+- Atualizações em massa
+- Exclusões estruturais
+```
+
+Sempre:
+
+```text
+✔ Fazer backup
+✔ Testar em ambiente de desenvolvimento
+✔ Confirmar servidor correto
+```
+
+---
+
+## 📋 Resumo Rápido
+
+* Dump é um arquivo `.sql` com comandos de reconstrução
+* MySQL não possui desfazer (undo)
+* Exportação é feita em **Server → Data Export**
+* Importação é feita em **Server → Data Import**
+* Workbench é ferramenta, não servidor
+* Backup é obrigação profissional
+
+---
+
+> 💡 Dica: Existem dois tipos de administradores de banco de dados: os que já perderam dados e os que ainda vão perder. A diferença está em quem tem backup e quem não tem.
