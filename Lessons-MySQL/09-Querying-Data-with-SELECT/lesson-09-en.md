@@ -1,7 +1,3 @@
-Segue **apenas a adaptação para o inglês**, mantendo **estrutura, exemplos e conteúdo exatamente iguais**.
-
----
-
 # 📚 Lesson 9 — Querying Data with SELECT in MySQL
 
 ---
