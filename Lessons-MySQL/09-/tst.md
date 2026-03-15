@@ -104,7 +104,6 @@ ORDER BY nome ASC;
 -- | Excel Básico       | 220.00 |            20 |
 -- | HTML e CSS         | 320.00 |            30 |
 ```
----
 #### Ordenar por Preço (menor para maior)
 ```
 SELECT nome, preco, area
@@ -140,7 +139,7 @@ ORDER BY preco DESC;
 -- | Python para Dados  | 580.00 | Programação     |
 -- | Redes de Computadores| 550.00| Infraestrutura  |
 ```
----
+
 #### Ordenar por Ano (mais recente primeiro)
 ```
 SELECT nome, ano_lancamento, preco
@@ -255,7 +254,7 @@ WHERE ano <> 2024;
 
 # 📦 Operadores de Faixa
 
-### 📏 Operador BETWEEN:
+### 📏 Operador BETWEEN: 
 Seleciona valores **dentro de um intervalo**.
 
 Importante: **os limites são incluídos**.
