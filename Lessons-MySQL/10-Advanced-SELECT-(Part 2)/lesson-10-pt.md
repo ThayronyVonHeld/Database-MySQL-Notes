@@ -13,7 +13,7 @@
 
 ---
 
-# 🔎 Buscas por Padrão com LIKE
+# 🔍 O Operador LIKE
 
 Até agora usamos comparações exatas com `=`.
 
@@ -35,15 +35,13 @@ LIKE
 
 # 🔤 Caracteres Coringa (Wildcards)
 
-## % (Porcentagem)
+### 1. Porcentagem (%) - Qualquer Sequência de Caracteres
 
 Representa:
 
 ```text
 0, 1 ou vários caracteres
 ```
-
----
 
 ### Exemplos
 
@@ -54,7 +52,6 @@ SELECT * FROM alunos
 WHERE nome LIKE 'A%';
 ```
 
----
 
 Termina com "A":
 
@@ -63,7 +60,6 @@ SELECT * FROM alunos
 WHERE nome LIKE '%A';
 ```
 
----
 
 Contém "A" em qualquer posição:
 
@@ -74,7 +70,7 @@ WHERE nome LIKE '%A%';
 
 ---
 
-## _ (Sublinhado)
+### 2. Sublinhado (_)
 
 Representa:
 
@@ -82,7 +78,6 @@ Representa:
 exatamente 1 caractere
 ```
 
----
 
 ### Exemplo
 
@@ -188,7 +183,7 @@ Argentina
 Chile
 ```
 
----
+
 
 💡 O `DISTINCT` funciona como um **"filtro de duplicidade"**.
 
@@ -200,7 +195,7 @@ Permitem realizar **cálculos diretamente no banco de dados**.
 
 ---
 
-## 🔢 COUNT() — Contagem
+### 🔢 COUNT() — Contagem
 
 Conta quantos registros existem.
 
@@ -222,6 +217,8 @@ Com filtro:
 SELECT COUNT(*) FROM alunos
 WHERE nacionalidade = 'Brasil';
 ```
+
+Resultado: Quantidade total dos alunos com nacionalidade brasileira
 
 ---
 
@@ -285,46 +282,23 @@ Média das cargas horárias
 
 ---
 
-# 🔄 Exemplo Completo
+## 📋 Resumo
 
-```sql
-SELECT 
-    COUNT(*) AS total_cursos,
-    AVG(carga_horaria) AS media,
-    MAX(carga_horaria) AS maior,
-    MIN(carga_horaria) AS menor
-FROM cursos
-WHERE ano >= 2022;
-```
-
----
-
-# 📊 Resumo Rápido
-
-* **LIKE** busca padrões em textos
-* `%` representa qualquer quantidade de caracteres
-* `_` representa um único caractere
-* **NOT LIKE** exclui padrões
-* **DISTINCT** remove duplicidades
-* **COUNT()** conta registros
-* **MAX()** maior valor
-* **MIN()** menor valor
-* **SUM()** soma valores
-* **AVG()** média dos valores
+* **LIKE**: Busca por padrões em textos (não igualdade exata)
+* **`%`** (porcentagem): Substitui zero ou mais caracteres
+* **`_`** (sublinhado): Substitui exatamente um caractere
+* **NOT LIKE**: Exclui padrões específicos
+* **DISTINCT**: Elimina valores duplicados no resultado
+* **COUNT**: Conta registros
+* **MAX**: Encontra o maior valor
+* **MIN**: Encontra o menor valor
+* **SUM**: Soma valores numéricos
+* **AVG**: Calcula média aritmética
+* **Case insensitive**: MySQL não diferencia maiúsculas/minúsculas por padrão
+* **Acentos**: São reconhecidos normalmente com UTF-8
 
 ---
 
-💡 **Dica de desenvolvedor**
+>💡 **Dica:** Com `LIKE`, `DISTINCT` e funções de agregação, você começa a sair do básico e entrar no nível onde o banco **realmente trabalha por você**.
 
-Com `LIKE`, `DISTINCT` e funções de agregação, você começa a sair do básico e entrar no nível onde o banco **realmente trabalha por você**.
-
-Esses recursos são muito usados em:
-
-```text
-- Relatórios
-- Dashboards
-- APIs
-- Análise de dados
-```
-
-Dominar isso é um grande passo para se tornar um dev mais completo 🚀
+> Esses recursos são muito usados em: Relatórios, Dashboards, APIs, Análise de dados
