@@ -322,10 +322,7 @@ Aqui muda tudo:
 ---
 
 ### Exemplo
-
-```text
-Aluno ↔ Curso
-```
+![](Lessons-MySQL\img\IMG Cardinalidade.png)
 
 Tabela intermediária:
 
