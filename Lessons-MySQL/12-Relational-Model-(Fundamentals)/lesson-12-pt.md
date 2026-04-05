@@ -322,7 +322,7 @@ Aqui muda tudo:
 ---
 
 ### Exemplo
-![](Lessons-MySQL\img\IMG Cardinalidade.png)
+![](\Lessons-MySQL\img\IMG Cardinalidade.png)
 
 Tabela intermediária:
 
