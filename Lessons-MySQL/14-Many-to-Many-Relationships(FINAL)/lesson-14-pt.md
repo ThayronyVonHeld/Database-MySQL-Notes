@@ -4,17 +4,16 @@
 
 ## 🎯 Objetivos da Aula
 
-* Compreender o relacionamento **Muitos para Muitos (N:N)**
-* Implementar **tabela intermediária (entidade associativa)**
+* Compreender o relacionamento Muitos para Muitos (N:N)
+* Aprender a técnica da Entidade Associativa (tabela intermediária)
 * Garantir **integridade referencial** em relações complexas
 * Inserir dados em tabelas relacionais
 * Realizar **JOINs entre múltiplas tabelas**
 * Utilizar **aliases** para consultas complexas
-* Consolidar o aprendizado do curso
 
 ---
 
-# 🔗 Relacionamento Muitos para Muitos (N:N)
+## 🔗 Relacionamento Muitos para Muitos (N:N)
 
 Esse é o tipo de relacionamento mais comum em sistemas reais.
 
@@ -26,20 +25,16 @@ Esse é o tipo de relacionamento mais comum em sistemas reais.
 Vários registros de um lado → se relacionam com vários do outro
 ```
 
----
-
 ## 💡 Exemplo clássico
 
 ```text
 Gafanhoto (Aluno) ↔ Curso
 ```
 
-👉 Um aluno pode fazer vários cursos
-👉 Um curso pode ter vários alunos
+- 👉 Um aluno pode fazer vários cursos
+- 👉 Um curso pode ter vários alunos
 
----
-
-# 🧩 A Solução: Tabela Intermediária
+# 🧩 Tabela Intermediária
 
 Não dá pra ligar direto.
 
@@ -54,6 +49,13 @@ Essa tabela representa o relacionamento.
 ```text
 Gafanhoto ← Assiste → Curso
 ```
+
+---
+
+## 💡 Exemplo visual:
+
+### Exemplo
+![](\Lessons-MySQL\img\IMG Cardinalidade.png)
 
 ---
 
@@ -87,13 +89,38 @@ CREATE TABLE assiste (
 
 💡 Agora temos:
 
-```text
-N:N → transformado em dois 1:N
+```mermaid
+erDiagram
+    ALUNO ||--o{ MATRICULA : faz
+    CURSO ||--o{ MATRICULA : "tem"
+    
+    ALUNO {
+        int id PK
+        string nome
+        string email
+    }
+    
+    CURSO {
+        int id PK
+        string titulo
+        int carga_horaria
+    }
+    
+    MATRICULA {
+        int id PK
+        int aluno_id FK
+        int curso_id FK
+        date data_matricula
+        int nota
+    }
 ```
+
+O relacionamento N:N foi "quebrado" em dois relacionamentos 1:N
+com uma tabela no meio (entidade associativa)
 
 ---
 
-# 🔒 Integridade Referencial
+## 🔒 Integridade Referencial
 
 As FKs garantem:
 
@@ -119,7 +146,7 @@ ERRO ❌
 
 ---
 
-# ➕ Inserindo Dados
+## ➕ Inserindo Dados
 
 Agora sim, criando relações reais:
 
@@ -138,7 +165,7 @@ Gafanhoto 1 está assistindo o Curso 2
 
 ---
 
-# 🔄 Problema Real
+## 🔄 Problema Real
 
 Se fizermos:
 
@@ -156,11 +183,12 @@ Resultado:
 
 ---
 
-# 🔗 Solução: Múltiplos JOINs
+## 🔗 Solução: Junções com Múltiplas Tabelas (Multiple JOINs)
 
 Precisamos buscar os dados reais.
 
 ---
+
 
 ## 🧠 Estratégia
 
@@ -195,7 +223,7 @@ Pedro | Python  | 2024-03-01
 
 ---
 
-# 🏷️ Uso de Aliases
+## 🏷️ Uso de Aliases
 
 Essencial para queries grandes.
 
@@ -207,17 +235,7 @@ c → cursos
 
 ---
 
-## 💡 Por que usar?
-
-```text
-✔ Evita repetição
-✔ Evita ambiguidade
-✔ Deixa o código mais limpo
-```
-
----
-
-# ⚠️ Coluna Ambígua
+## ⚠️ Coluna Ambígua
 
 Sem alias:
 
@@ -229,7 +247,7 @@ SELECT nome FROM gafanhotos, cursos;
 
 ---
 
-## ✔ Correto
+### ✔ Correto
 
 ```sql
 SELECT g.nome, c.nome
@@ -239,7 +257,7 @@ JOIN cursos c;
 
 ---
 
-# 🔁 Ordem dos JOINs
+## 🔁 Ordem dos JOINs
 
 ```text
 Tabela principal → JOIN → JOIN → JOIN...
@@ -253,7 +271,7 @@ ON tabela1.campo = tabela2.campo
 
 ---
 
-# 📈 Melhorando a Query
+## 📈 Melhorando a Query
 
 ```sql
 SELECT 
@@ -268,7 +286,7 @@ ORDER BY g.nome;
 
 ---
 
-# 🧠 Visão Geral do Fluxo
+## 🧠 Visão Geral do Fluxo
 
 ```text
 Gafanhotos → Assiste → Cursos
@@ -278,7 +296,7 @@ Gafanhotos → Assiste → Cursos
 
 ---
 
-# 📊 Resumo Rápido
+## 📊 Resumo Rápido
 
 * **N:N** precisa de tabela intermediária
 * A tabela possui **duas FKs**
@@ -289,55 +307,31 @@ Gafanhotos → Assiste → Cursos
 * Sem JOIN → só IDs
 * Com JOIN → dados reais
 
----
-
-# 🚀 Encerramento do Curso
-
-Se você chegou até aqui, você aprendeu:
-
-```text
-✔ Criar tabelas
-✔ Alterar estruturas
-✔ Consultar dados (SELECT)
-✔ Filtrar, agrupar e analisar
-✔ Modelar banco de dados
-✔ Criar relacionamentos
-✔ Usar JOINs profissionais
-```
 
 ---
+## 📋 Resumo Final: Tabela de Comandos Essenciais
 
-💡 **A verdade final**
-
-```text
-Banco de dados NÃO se aprende só assistindo
-Se aprende PRATICANDO
-```
-
----
-
-🔥 **Próximo nível**
-
-Agora você está pronto para:
-
-```text
-- Trabalhar com APIs (Spring Boot, Node, etc)
-- Criar sistemas completos
-- Integrar front-end com banco
-- Estudar ORM (Hibernate/JPA)
-```
+| Comando | Categoria | Uso |
+|---------|-----------|-----|
+| `CREATE DATABASE` | DDL | Criar banco de dados |
+| `CREATE TABLE` | DDL | Criar tabelas |
+| `ALTER TABLE` | DDL | Modificar estrutura |
+| `DROP TABLE` | DDL | Remover tabelas |
+| `INSERT INTO` | DML | Inserir dados |
+| `UPDATE` | DML | Atualizar dados |
+| `DELETE` | DML | Remover dados |
+| `SELECT` | DQL | Consultar dados |
+| `INNER JOIN` | DQL | Juntar tabelas (interseção) |
+| `LEFT JOIN` | DQL | Juntar (prioriza esquerda) |
+| `RIGHT JOIN` | DQL | Juntar (prioriza direita) |
+| `GROUP BY` | DQL | Agrupar resultados |
+| `HAVING` | DQL | Filtrar grupos |
+| `ORDER BY` | DQL | Ordenar resultados |
 
 ---
-
-💬 **Mensagem final (nível Guanabara 😄)**
-
-```text
-"Você não aprende a nadar assistindo vídeo…
-Você aprende entrando na água."
-```
-
-Agora é com você.
-
-👉 Prática, prática e mais prática.
 
 E bem-vindo ao nível onde você realmente **entende banco de dados** 🚀
+
+>💡**Dica final:** Banco de dados NÃO se aprende só assistindo ou lendo.
+> Se aprende PRATICANDO
+
