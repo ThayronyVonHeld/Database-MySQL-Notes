@@ -74,7 +74,7 @@ select count(altura) from gafanhotos where (sexo = 'F') and (altura > 1.90);
 ---
 
 Exercício 10
-"Uma lista com as profissões dos gafanhoros e seus respectivos quantitativos"
+"Uma lista com as profissões dos gafanhotos e seus respectivos quantitativos"
 
 select profissao, count(*) from gafanhotos
 group by profissão
